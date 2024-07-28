@@ -15,7 +15,7 @@ export function YourSkiens() {
 
   return (
     <div>
-      <div className="flex items-center justify-between gap-x-8">
+      <div className="flex items-center justify-between gap-x-8 gap-y-4 flex-col xl:flex-row">
         <div className="gap-y-1 gap-x-8">
           <h2 className="text-2xl font-semibold  text-foreground tracking-tight">
             Your skiens
@@ -30,7 +30,7 @@ export function YourSkiens() {
       </div>
       <Separator className="my-4" />
       <div className="relative">
-        <ScrollArea className=" mx-auto px-2 max-w-screen-lg">
+        <ScrollArea className=" mx-auto px-2 w-[90vw] xl:max-w-screen-lg xl:w-auto">
           <div className="flex gap-x-12 pb-4">
             {yourSkiens.isLoading && placeholder.map((_, i) => (
               <div key={i} className="grid gap-y-2 ">
