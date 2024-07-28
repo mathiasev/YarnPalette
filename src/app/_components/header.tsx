@@ -39,7 +39,7 @@ export function Header() {
                         size="icon"
                         className="shrink-0 md:hidden"
                     >
-                        <Menu className="h-5 w-5" />
+                        <Palette className="h-5 w-5 text-primary" />
                         <span className="sr-only">Toggle navigation menu</span>
                     </Button>
                 </SheetTrigger>
@@ -49,8 +49,8 @@ export function Header() {
                             href="/"
                             className="flex items-center gap-2 text-lg font-semibold"
                         >
-                            <Package2 className="h-6 w-6" />
-                            <span className="sr-only">Yarn Palette</span>
+                            <Palette className="h-6 w-6 text-primary" />
+                            <span className="">Yarn Palette</span>
                         </Link>
                         <Link
                             href="/"
