@@ -1,29 +1,17 @@
-# Create T3 App
+# Yarn Palette
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
-
-## What's next? How do I make an app with this?
-
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
-
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
-
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
-
-## Learn More
-
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
-
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
-
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
-
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+To Do:
+[ ] **Search and Filter Options**: Allow users to search by color, type, brand, or fiber content.
+[ ] **Detailed Yarn Profiles**: Include photos, descriptions, and specifications (e.g., weight, length, material).
+[ ] **Color Swatch Gallery**: Display all available colors in a visually appealing grid.
+[ ] **Inventory Management**: Track quantities and alert when stock is low.
+[ ] **Wishlist and Favorites**: Let users save their favorite yarns for future reference.
+[ ] **Project Ideas and Patterns**: Provide inspiration and patterns that can be made with the available yarns.
+[ ] **User Reviews and Ratings**: Allow users to leave feedback and rate the yarns.
+[ ] **Blog Section**: Share tips, tutorials, and stories related to knitting and crocheting.
+[ ] **Social Media Integration**: Connect with platforms like Instagram and Pinterest to showcase projects and updates.
+[ ] **Newsletter Signup**: Keep users informed about new arrivals, sales, and special events.
+[ ] **Interactive Color Picker**: Let users see how different colors look together.
+[ ] **Secure Login and User Profiles**: Allow users to create accounts to save their preferences and order history.
+[ ] **Shopping Cart and Checkout**: If you plan to sell yarn, include a seamless e-commerce experience.
+[ ] **Community Forum**: Create a space for users to share their projects, ask questions, and connect with others.
