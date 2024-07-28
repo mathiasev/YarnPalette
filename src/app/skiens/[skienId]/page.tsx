@@ -13,6 +13,8 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
     const [editMode, setEditMode] = useState(false);
     const [name, setName] = useState(skien.data?.name ?? "");
 
+    // const editMigration = api.skien.edit.useMutation();
+
     useEffect(() => {
         setEditMode(s.get("edit") === "true");
     }, [s]);
@@ -28,9 +30,12 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
             <p>Skien Name: {skien?.data?.name}</p>
 
 
-            {editMode &&
-                <Input type="text" defaultValue={skien.data?.name ?? ""} onChange={(e) => setName(e.target.value)} />
-            }
+            {editMode && (
+                <div>
+                    <Input type="text" defaultValue={skien.data?.name ?? ""} onChange={(e) => setName(e.target.value)} />
+                    <p>{name}</p>
+                </div>
+            )}
 
         </div >
     )

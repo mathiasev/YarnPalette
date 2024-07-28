@@ -11,7 +11,7 @@ import { Skeleton } from "~/components/ui/skeleton";
 
 export function YourSkiens() {
   const yourSkiens = api.skien.getLatest.useQuery();
-
+  const placeholder = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   return (
     <div>
@@ -32,7 +32,7 @@ export function YourSkiens() {
       <div className="relative">
         <ScrollArea className=" mx-auto px-2 max-w-screen-lg">
           <div className="flex gap-x-12 pb-4">
-            {yourSkiens.isLoading && [...Array(10)].map((_, i) => (
+            {yourSkiens.isLoading && placeholder.map((_, i) => (
               <div key={i} className="grid gap-y-2 ">
                 <Skeleton className="h-80 w-56 rounded" />
                 <Skeleton className="h-5 w-28" />

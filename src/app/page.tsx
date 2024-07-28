@@ -1,4 +1,3 @@
-import { LatestPosts } from "~/app/_components/post";
 import { YourSkiens } from "./_components/your-skiens";
 import { Suspense } from "react";
 
