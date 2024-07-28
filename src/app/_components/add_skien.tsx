@@ -42,7 +42,7 @@ export function AddSkienDialog() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline">
+                <Button variant="default" size={"sm"} className="bg-secondary-foreground">
                     <span className="flex gap-2 items-center">
                         <Plus className="h-4 w-4" />
                         Add a skien
@@ -58,7 +58,6 @@ export function AddSkienDialog() {
                         Start adding a new skien to your collection.
                     </DialogDescription>
                 </DialogHeader>
-                <div>{JSON.stringify(createSkien)}</div>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
 
@@ -72,7 +71,9 @@ export function AddSkienDialog() {
                                         <Input placeholder="Name" {...field} />
                                     </FormControl>
                                     <FormDescription>
-                                        Name your skien.
+                                        <span className="text-muted-foreground text-xs">
+                                            Name your skien.
+                                        </span>
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>

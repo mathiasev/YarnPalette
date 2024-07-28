@@ -17,7 +17,7 @@ export function YourSkiens() {
     <div>
       <div className="flex items-center justify-between gap-x-8">
         <div className="gap-y-1 gap-x-8">
-          <h2 className="text-2xl font-semibold tracking-tight">
+          <h2 className="text-2xl font-semibold  text-foreground tracking-tight">
             Your skiens
           </h2>
           <p className="text-sm text-muted-foreground">

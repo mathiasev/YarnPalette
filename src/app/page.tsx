@@ -10,9 +10,6 @@ export default async function Home() {
       <Suspense>
         <YourSkiens />
       </Suspense>
-      <Suspense>
-        <LatestPosts />
-      </Suspense>
     </main>
   );
 }

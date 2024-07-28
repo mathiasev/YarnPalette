@@ -30,12 +30,7 @@ export function Header() {
                 >
                     Skiens
                 </Link>
-                <Link
-                    href="/posts"
-                    className="text-muted-foreground transition-colors hover:text-foreground"
-                >
-                    Posts
-                </Link>
+
             </nav>
             <Sheet>
                 <SheetTrigger asChild>
