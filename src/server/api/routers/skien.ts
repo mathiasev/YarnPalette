@@ -8,9 +8,10 @@ export const skienRouter = createTRPCRouter({
   create: publicProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
-      await ctx.db.insert(skiens).values({
+      return await ctx.db.insert(skiens).values({
         name: input.name,
-      })
+      }).returning()
+
     }),
 
   getLatest: publicProcedure.query(async ({ ctx }) => {
@@ -21,4 +22,15 @@ export const skienRouter = createTRPCRouter({
 
     return skiens ?? null;
   }),
+
+  getById: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const skien = await ctx.db.query.skiens.findFirst({
+        where: (skiens, { eq }) => eq(skiens.id, input.id),
+      });
+
+      return skien ?? null;
+    }),
+
 });

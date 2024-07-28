@@ -1,3 +1,5 @@
+"use client"
+
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Menu, Package2, Palette, Search } from "lucide-react";
 import Link from "next/link";
@@ -60,6 +62,12 @@ export function Header() {
                             className="text-muted-foreground hover:text-foreground"
                         >
                             Dashboard
+                        </Link>
+                        <Link
+                            href="/skiens"
+                            className="text-muted-foreground hover:text-foreground"
+                        >
+                            Skiens
                         </Link>
                     </nav>
                 </SheetContent>
