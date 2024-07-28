@@ -4,15 +4,13 @@ import { ArrowRight, Plus } from "lucide-react"
 import { Button } from "~/components/ui/button"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "~/components/ui/dialog"
 import { Input } from "~/components/ui/input"
-import { Label } from "~/components/ui/label"
-
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form"
 import { api } from "~/trpc/react"
-import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
+import { useRouter } from "next/navigation"
+
 
 const formSchema = z.object({
     name: z.string().min(1).max(100),
@@ -20,10 +18,12 @@ const formSchema = z.object({
 
 export function AddSkienDialog() {
 
+    const router = useRouter();
+
     const createSkien = api.skien.create.useMutation(
         {
             onSuccess: (skien) => {
-                console.log(skien)
+                skien[0]?.id && router.push(`/skien/${skien[0].id}`)
             }
         }
     );
@@ -36,17 +36,13 @@ export function AddSkienDialog() {
     })
 
     function onSubmit(values: z.infer<typeof formSchema>) {
-
-        createSkien.mutate(values)
-        if (createSkien.isSuccess) {
-            revalidatePath("/skiens")
-        }
+        createSkien.mutate(values);
     }
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant="outline">
+                <Button variant="default" size={"sm"} className="bg-secondary-foreground">
                     <span className="flex gap-2 items-center">
                         <Plus className="h-4 w-4" />
                         Add a skien
@@ -75,7 +71,9 @@ export function AddSkienDialog() {
                                         <Input placeholder="Name" {...field} />
                                     </FormControl>
                                     <FormDescription>
-                                        Name your skien.
+                                        <span className="text-muted-foreground text-xs">
+                                            Name your skien.
+                                        </span>
                                     </FormDescription>
                                     <FormMessage />
                                 </FormItem>
