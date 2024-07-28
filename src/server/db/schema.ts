@@ -40,9 +40,10 @@ export const skiens = createTable(
   "skien",
   {
     id: serial("id").primaryKey(),
-    name: varchar("name", { length: 256 }),
+    name: varchar("name", { length: 256 }).notNull(),
     info: json("info"),
     color: varchar("color", { length: 256 }),
+    imageUrl: varchar("image_url", { length: 256 }),
 
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
@@ -52,6 +53,6 @@ export const skiens = createTable(
     ),
   },
   (example) => ({
-    nameIndex: index("name_idx").on(example.name),
+    skienNameIndex: index("skien_name_idx").on(example.name),
   })
 );
