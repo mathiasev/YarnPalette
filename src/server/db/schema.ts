@@ -8,6 +8,7 @@ import {
   serial,
   timestamp,
   varchar,
+  json
 } from "drizzle-orm/pg-core";
 
 /**
@@ -23,6 +24,26 @@ export const posts = createTable(
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date()
+    ),
+  },
+  (example) => ({
+    nameIndex: index("name_idx").on(example.name),
+  })
+);
+
+export const skiens = createTable(
+  "skien",
+  {
+    id: serial("id").primaryKey(),
+    name: varchar("name", { length: 256 }),
+    info: json("info"),
+    color: varchar("color", { length: 256 }),
+
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
