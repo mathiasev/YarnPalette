@@ -50,7 +50,7 @@ export function Header() {
                             className="flex items-center gap-2 text-lg font-semibold"
                         >
                             <Palette className="h-6 w-6 text-primary" />
-                            <span className="sr-only">Yarn Palette</span>
+                            <span className="">Yarn Palette</span>
                         </Link>
                         <Link
                             href="/"
