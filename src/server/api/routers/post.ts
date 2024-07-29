@@ -21,7 +21,7 @@ export const postRouter = createTRPCRouter({
       if (!user) throw new Error("User not logged in");
       await ctx.db.insert(posts).values({
         name: input.name,
-        createdBy: parseInt(user.id)
+        createdBy: user.id
       });
     }),
 
