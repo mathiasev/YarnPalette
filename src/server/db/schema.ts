@@ -28,7 +28,7 @@ export const posts = createTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    createdBy: integer("created_by").notNull(),
+    createdBy: varchar("created_by").notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
       () => new Date()
     ),
@@ -47,7 +47,7 @@ export const skiens = createTable(
     color: varchar("color", { length: 256 }),
     imageUrl: varchar("image_url", { length: 256 }),
     description: varchar("description", { length: 256 }),
-    createdBy: integer("created_by").notNull(),
+    createdBy: varchar("created_by").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -68,7 +68,7 @@ export const skienStocks = createTable(
     skienId: integer("skien_id").notNull(),
     location: varchar("location", { length: 256 }).notNull(),
     stock: integer("stock").notNull(),
-    createdBy: integer("created_by").notNull(),
+    createdBy: varchar("created_by").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),

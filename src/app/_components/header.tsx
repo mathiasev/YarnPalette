@@ -43,7 +43,7 @@ export function Header() {
                     </Button>
                 </SheetTrigger>
                 <SheetContent side="left">
-                    <nav className="grid gap-6 text-lg font-medium">
+                    <nav className="grid gap-6  font-medium">
                         <Link
                             href="/"
                             className="flex items-center gap-2 text-lg font-semibold"

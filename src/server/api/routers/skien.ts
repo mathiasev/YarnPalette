@@ -17,7 +17,7 @@ export const skienRouter = createTRPCRouter({
       return await ctx.db.insert(skiens).values({
         name: input.name,
         imageUrl: input.imageUrl,
-        createdBy: parseInt(user.id)
+        createdBy: user.id
       }).returning()
     }),
 
@@ -34,7 +34,7 @@ export const skienRouter = createTRPCRouter({
         skienId: input.skienId,
         location: input.location,
         stock: input.stock,
-        createdBy: parseInt(user.id)
+        createdBy: user.id
       }).returning()
     }),
 
