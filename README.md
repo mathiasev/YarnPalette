@@ -1,11 +1,11 @@
 # Yarn Palette
 
 To Do:
+[ ] **Wishlist and Favorites**: Let users save their favorite yarns for future reference.
 [ ] **Search and Filter Options**: Allow users to search by color, type, brand, or fiber content.
 [ ] **Detailed Yarn Profiles**: Include photos, descriptions, and specifications (e.g., weight, length, material).
 [ ] **Color Swatch Gallery**: Display all available colors in a visually appealing grid.
 [ ] **Inventory Management**: Track quantities and alert when stock is low.
-[ ] **Wishlist and Favorites**: Let users save their favorite yarns for future reference.
 [ ] **Project Ideas and Patterns**: Provide inspiration and patterns that can be made with the available yarns.
 [ ] **User Reviews and Ratings**: Allow users to leave feedback and rate the yarns.
 [ ] **Blog Section**: Share tips, tutorials, and stories related to knitting and crocheting.

@@ -1,17 +1,41 @@
+import { currentUser } from "@clerk/nextjs/server";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
-import { skiens } from "~/server/db/schema";
+import { skienStocks, skiens } from "~/server/db/schema";
 
 export const skienRouter = createTRPCRouter({
 
   create: publicProcedure
-    .input(z.object({ name: z.string().min(1) }))
+    .input(z.object({
+      name: z.string().min(1),
+      imageUrl: z.string().min(1)
+    }))
     .mutation(async ({ ctx, input }) => {
+      const user = await currentUser();
+      if (!user) throw new Error("User not logged in");
       return await ctx.db.insert(skiens).values({
         name: input.name,
+        imageUrl: input.imageUrl,
+        createdBy: parseInt(user.id)
       }).returning()
+    }),
 
+  updateStock: publicProcedure
+    .input(z.object({
+      skienId: z.number(),
+      location: z.string().min(1),
+      stock: z.number()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      const user = await currentUser();
+      if (!user) throw new Error("User not logged in");
+      return await ctx.db.insert(skienStocks).values({
+        skienId: input.skienId,
+        location: input.location,
+        stock: input.stock,
+        createdBy: parseInt(user.id)
+      }).returning()
     }),
 
   getLatest: publicProcedure.query(async ({ ctx }) => {
