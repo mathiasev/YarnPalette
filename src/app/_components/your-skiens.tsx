@@ -42,7 +42,7 @@ export function YourSkiens() {
             {yourSkiens.data?.map((skien) => (
               <Link href={`/skiens/${skien.id}`} key={skien.id} className="grid gap-y-2">
                 {!skien.imageUrl && <Skeleton className="h-80 w-56 rounded bg-muted" />}
-                {skien.imageUrl && <Image src={skien.imageUrl} alt={skien.name} width={100} height={100} className="rounded-full" />}
+                {skien.imageUrl && <Image src={skien.imageUrl} alt={skien.name} width={224} height={320} className="h-80 w-56 rounded object-cover max-w-none" />}
 
                 <h3 className="font-medium leading-none">{skien.name}</h3>
                 <p className="text-xs text-muted-foreground">{skien.createdAt.toLocaleDateString('en-AU')}</p>

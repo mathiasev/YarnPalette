@@ -1,14 +1,15 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   index,
   pgTableCreator,
   serial,
   timestamp,
   varchar,
-  json
+  json,
+  integer
 } from "drizzle-orm/pg-core";
 
 /**
@@ -27,6 +28,7 @@ export const posts = createTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
+    createdBy: integer("created_by").notNull(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
       () => new Date()
     ),
@@ -44,7 +46,8 @@ export const skiens = createTable(
     info: json("info"),
     color: varchar("color", { length: 256 }),
     imageUrl: varchar("image_url", { length: 256 }),
-
+    description: varchar("description", { length: 256 }),
+    createdBy: integer("created_by").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
@@ -56,3 +59,33 @@ export const skiens = createTable(
     skienNameIndex: index("skien_name_idx").on(example.name),
   })
 );
+
+
+export const skienStocks = createTable(
+  "skien_stock",
+  {
+    id: serial("id").primaryKey(),
+    skienId: integer("skien_id").notNull(),
+    location: varchar("location", { length: 256 }).notNull(),
+    stock: integer("stock").notNull(),
+    createdBy: integer("created_by").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
+      () => new Date()
+    ),
+  },
+  (example) => ({
+    skienStockNameIndex: index("skien_stock_name_idx").on(example.location),
+  })
+);
+
+
+export const skienRelations = relations(skiens, ({ many }) => ({
+  skienStocks: many(skienStocks)
+}));
+
+export const skienStockRelations = relations(skienStocks, ({ one }) => ({
+  skien: one(skiens, { fields: [skienStocks.id], references: [skiens.id] }),
+}));

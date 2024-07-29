@@ -1,3 +1,4 @@
+import { currentUser } from "@clerk/nextjs/server";
 import { z } from "zod";
 
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
@@ -15,8 +16,12 @@ export const postRouter = createTRPCRouter({
   create: publicProcedure
     .input(z.object({ name: z.string().min(1) }))
     .mutation(async ({ ctx, input }) => {
+
+      const user = await currentUser();
+      if (!user) throw new Error("User not logged in");
       await ctx.db.insert(posts).values({
         name: input.name,
+        createdBy: parseInt(user.id)
       });
     }),
 

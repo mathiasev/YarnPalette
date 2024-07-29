@@ -10,10 +10,12 @@ import { useForm } from "react-hook-form"
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form"
 import { api } from "~/trpc/react"
 import { useRouter } from "next/navigation"
+import { UploadButton } from "~/lib/uploadthing"
 
 
 const formSchema = z.object({
     name: z.string().min(1).max(100),
+    imageUrl: z.string().min(1),
 })
 
 export function AddSkienDialog() {
@@ -23,7 +25,7 @@ export function AddSkienDialog() {
     const createSkien = api.skien.create.useMutation(
         {
             onSuccess: (skien) => {
-                skien[0]?.id && router.push(`/skien/${skien[0].id}`)
+                skien[0]?.id && router.push(`/skiens/${skien[0].id}`)
             }
         }
     );
@@ -73,6 +75,36 @@ export function AddSkienDialog() {
                                     <FormDescription>
                                         <span className="text-muted-foreground text-xs">
                                             Name your skien.
+                                        </span>
+                                    </FormDescription>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="imageUrl"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Image</FormLabel>
+                                    <FormControl>
+                                        <UploadButton
+                                            endpoint="imageUploader"
+                                            onClientUploadComplete={(res) => {
+                                                // Do something with the response
+                                                console.log("Files: ", res);
+                                                field.onChange(res[0]?.url ?? "");
+                                                alert("Upload Completed");
+                                            }}
+                                            onUploadError={(error: Error) => {
+                                                // Do something with the error.
+                                                alert(`ERROR! ${error.message}`);
+                                            }}
+                                        />
+                                    </FormControl>
+                                    <FormDescription>
+                                        <span className="text-muted-foreground text-xs">
+                                            Upload an image of your skien.
                                         </span>
                                     </FormDescription>
                                     <FormMessage />
