@@ -3,6 +3,7 @@ import { currentUser } from "@clerk/nextjs/server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { type NextRequest } from "next/server";
 
+
 import { env } from "~/env";
 import { appRouter } from "~/server/api/root";
 import { createTRPCContext } from "~/server/api/trpc";
@@ -12,9 +13,12 @@ import { createTRPCContext } from "~/server/api/trpc";
  * handling a HTTP request (e.g. when you make requests from Client Components).
  */
 const createContext = async (req: NextRequest) => {
+  const user = await currentUser();
+
   return createTRPCContext({
     headers: req.headers,
-    user: await currentUser(),
+    user: user,
+    organization: undefined
   });
 };
 

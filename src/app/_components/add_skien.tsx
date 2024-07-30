@@ -11,6 +11,7 @@ import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, For
 import { api } from "~/trpc/react"
 import { useRouter } from "next/navigation"
 import { UploadButton } from "~/lib/uploadthing"
+import Image from "next/image"
 
 
 const formSchema = z.object({
@@ -85,16 +86,16 @@ export function AddSkienDialog() {
                             control={form.control}
                             name="imageUrl"
                             render={({ field }) => (
-                                <FormItem>
+                                <FormItem >
                                     <FormLabel>Image</FormLabel>
-                                    <FormControl>
-                                        <UploadButton
+                                    <FormControl >
+                                        <UploadButton disabled={form.formState.isSubmitting} className="ut-button:bg-primary ut-button:ring-primary ut-uploading:bg-primary-foreground "
                                             endpoint="imageUploader"
                                             onClientUploadComplete={(res) => {
                                                 // Do something with the response
                                                 console.log("Files: ", res);
                                                 field.onChange(res[0]?.url ?? "");
-                                                alert("Upload Completed");
+
                                             }}
                                             onUploadError={(error: Error) => {
                                                 // Do something with the error.
@@ -103,6 +104,7 @@ export function AddSkienDialog() {
                                         />
                                     </FormControl>
                                     <FormDescription>
+                                        {field.value && <Image src={field.value} alt="Skien Image" width={200} height={200} objectFit="contain" className="rounded mx-auto" />}
                                         <span className="text-muted-foreground text-xs">
                                             Upload an image of your skien.
                                         </span>
@@ -112,7 +114,7 @@ export function AddSkienDialog() {
                             )}
                         />
                         <DialogFooter>
-                            <Button type="submit" size="sm" className="px-3" disabled={!form.formState.isValid}>
+                            <Button type="submit" size="sm" className="px-3" disabled={!form.formState.isValid || form.formState.isSubmitting}>
                                 <span className="flex items-center gap-2 justify-baseline">
                                     <span >Create</span>
                                     <ArrowRight className="h-4 w-4" />

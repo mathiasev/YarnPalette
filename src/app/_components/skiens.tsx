@@ -5,6 +5,7 @@ import { api } from "~/trpc/react";
 import Image from "next/image";
 import Link from "next/link";
 import { Skeleton } from "~/components/ui/skeleton";
+import { Badge } from "~/components/ui/badge";
 
 export function Skiens() {
   const yourSkiens = api.skien.getLatest.useQuery();
@@ -20,7 +21,8 @@ export function Skiens() {
         </div>
       ))}
       {yourSkiens.data?.map((skien) => (
-        <Link href={`/skiens/${skien.id}`} key={skien.id} className="grid gap-y-2">
+        <Link href={`/skiens/${skien.id}`} key={skien.id} className="grid gap-y-2 relative">
+          <Badge className="absolute right-2 top-2" >{skien.skienStocks?.reduce((acc, curr) => acc + curr.stock, 0)}</Badge>
           {!skien.imageUrl && <Skeleton className="h-80 w-56 rounded bg-muted" />}
           {skien.imageUrl && <Image src={skien.imageUrl} alt={skien.name} width={224} height={320} className="h-80 w-56 rounded object-cover max-w-none" />}
 

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, or } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
@@ -16,7 +16,8 @@ export const skienRouter = createTRPCRouter({
       return await ctx.db.insert(skiens).values({
         name: input.name,
         imageUrl: input.imageUrl,
-        createdBy: ctx.user.id
+        createdBy: ctx.user.id,
+        organization: ctx.organization?.id
       }).returning()
     }),
 
@@ -46,18 +47,34 @@ export const skienRouter = createTRPCRouter({
     }),
 
   getMySkiens: protectedProcedure.query(async ({ ctx }) => {
-    const skiens = await ctx.db.query.skiens.findMany({
-      where: (skiens, { eq }) => eq(skiens.createdBy, ctx.user.id),
-      orderBy: (skiens, { desc }) => [desc(skiens.createdAt)],
-      limit: 20,
-    });
-
+    let skiens = null;
+    if (ctx?.organization?.id !== undefined && ctx?.organization?.id !== null) {
+      skiens = await ctx.db.query.skiens.findMany({
+        where: (skiens, { eq, or }) => or(
+          eq(skiens.createdBy, ctx.user.id),
+          eq(skiens.organization, ctx.organization?.id ?? "")),
+        orderBy: (skiens, { desc }) => [desc(skiens.createdAt)],
+        limit: 20,
+      });
+    } else {
+      skiens = await ctx.db.query.skiens.findMany({
+        where: (skiens, { eq }) =>
+          eq(skiens.createdBy, ctx.user.id),
+        orderBy: (skiens, { desc }) => [desc(skiens.createdAt)],
+        limit: 20,
+      });
+    }
     return skiens ?? null;
   }),
   getLatest: publicProcedure.query(async ({ ctx }) => {
     const skiens = await ctx.db.query.skiens.findMany({
       orderBy: (skiens, { desc }) => [desc(skiens.createdAt)],
       limit: 20,
+      with: {
+        skienStocks: {
+          columns: { "stock": true }
+        }
+      },
     });
 
     return skiens ?? null;
