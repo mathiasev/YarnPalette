@@ -40,7 +40,7 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
         onSuccess: () => redirect('/')
     })
 
-    function handleDelete() {
+    function handleDelete(): MouseEventHandler<HTMLButtonElement> {
         if (!skien.data) return;
         deleteSkien.mutate({ id: skien.data?.id });
     }
