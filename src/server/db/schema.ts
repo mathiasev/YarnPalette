@@ -37,6 +37,7 @@ export const skiens = createTable(
   {
     id: serial("id").primaryKey(),
     name: varchar("name", { length: 256 }).notNull(),
+    organization: varchar("organization", { length: 256 }),
     info: json("info"),
     color: varchar("color", { length: 256 }),
     imageUrl: varchar("image_url", { length: 256 }),

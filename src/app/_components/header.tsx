@@ -1,6 +1,6 @@
 "use client"
 
-import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { OrganizationSwitcher, SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { Palette } from "lucide-react";
 import Link from "next/link";
 import { Button } from "~/components/ui/button";
@@ -78,6 +78,7 @@ export function Header() {
                     </div>
                 </form> */}
                 <SignedIn>
+                    <OrganizationSwitcher />
                     <UserButton />
                 </SignedIn>
                 <SignedOut>
