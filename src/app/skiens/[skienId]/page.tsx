@@ -1,5 +1,5 @@
 "use client"
-import { Copy, MoreVertical } from "lucide-react";
+import { Copy, MoreVertical, Plus } from "lucide-react";
 import { revalidatePath } from "next/cache";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
@@ -14,6 +14,7 @@ import { api } from "~/trpc/react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
+import { redirect } from "next/navigation";
 
 
 
@@ -24,17 +25,24 @@ const stockFormSchema = z.object({
 
 export default function SkienPage({ params }: { params: { skienId: string } }) {
     const skien = api.skien.getById.useQuery({ id: parseInt(params.skienId) });
-    const skienStock = api.skien.getSkienStock.useQuery({ skienId: parseInt(params.skienId) });
 
     const skienInfo = skien.data?.info as Array<{ key: string; value: string }>;
 
     const addStock = api.skien.updateStock.useMutation(
         {
             onSuccess: () => {
-                skien.data?.id && revalidatePath(`/skiens/${skien.data?.id}`)
+                revalidatePath(`/skiens/${params.skienId}`)
             }
         }
     );
+
+    const deleteSkien = api.skien.delete.useMutation({
+        onSuccess: () => redirect('/')
+    })
+
+    const handleDelete = () => {
+        deleteSkien.mutate();
+    }
 
     const stockForm = useForm<z.infer<typeof stockFormSchema>>({
         resolver: zodResolver(stockFormSchema),
@@ -134,7 +142,7 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
                                     <DropdownMenuItem>Edit</DropdownMenuItem>
                                     <DropdownMenuItem>Export</DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem>Trash</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleDelete()}>Trash</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
@@ -142,39 +150,35 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
                     <CardContent className="p-6 text-sm">
                         <div className="grid gap-3">
                             <div className="font-semibold">Stock</div>
-                            {JSON.stringify(skienStock.data)}
                             <ul className="grid gap-3">
-                                {skienStock.data?.map((stock, index) => (
+                                {skien.data?.skienStocks.map((stock) => (
 
-                                    <li className="flex items-center justify-between" key={index}>
+                                    <li className="flex items-center justify-between" key={stock.id}>
                                         <span className="text-muted-foreground">
                                             {stock.location}
+                                            <span className="text-xs ml-2">
+                                                {stock.createdAt.toLocaleString("en-AU")}
+                                            </span>
                                         </span>
                                         <span>{stock.stock}</span>
-                                    </li>)
-                                )}
-                                {/* <li className="flex items-center justify-between">
-                                    <span className="text-muted-foreground">
-                                        Location
-                                    </span>
-                                    <span>qty</span>
-                                </li> */}
+                                    </li>
+                                ))}
                             </ul>
                             <Separator className="my-2" />
                             <ul className="grid gap-3">
                                 <li className="flex items-center justify-between font-semibold">
                                     <span className="text-muted-foreground">Total</span>
-                                    <span>$329.00</span>
+                                    <span>{skien.data?.skienStocks.reduce((acc, curr) => acc + curr.stock, 0)}</span>
                                 </li>
                             </ul>
                         </div>
 
                         <Separator className="my-4" />
                         <div className="grid gap-3">
-                            <div className="font-semibold">Add stock</div>
+                            <div className="font-semibold">Update stock</div>
                             <dl className="grid gap-3">
                                 <Form {...stockForm}    >
-                                    <form onSubmit={stockForm.handleSubmit(stockFormOnSubmit)} className="w-full flex items-center justify-between">
+                                    <form onSubmit={stockForm.handleSubmit(stockFormOnSubmit)} className="w-full gap-1 flex items-start justify-between">
                                         <FormField
                                             control={stockForm.control}
                                             name="location"
@@ -209,7 +213,10 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
                                                 </FormItem>
                                             )}
                                         />
-                                        <Button type="submit" variant={"default"}>Add</Button>
+                                        <Button type="submit" size={"icon"} variant={"default"}>
+                                            <Plus className="h-4 w-4" />
+                                            <span className="sr-only">Add</span>
+                                        </Button>
                                     </form>
                                 </Form>
                             </dl>
@@ -217,7 +224,7 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
                     </CardContent>
                     <CardFooter className="flex flex-row items-center border-t bg-muted/50 px-6 py-3">
                         <div className="text-xs text-muted-foreground">
-                            Updated <time dateTime="2023-11-23">November 23, 2023</time>
+                            Updated <time dateTime={skien.data?.updatedAt?.toLocaleString("en-AU")}>{skien.data?.updatedAt?.toLocaleString("en-AU")}</time>
                         </div>
                     </CardFooter>
                 </Card >

@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
@@ -19,19 +20,14 @@ export const skienRouter = createTRPCRouter({
       }).returning()
     }),
 
-  getSkienStock: protectedProcedure
-    .input(
-      z.object({
-        skienId: z.number()
-      }))
-    .query(async ({ ctx, input }) => {
-      const skienStocks = await ctx.db.query.skienStocks.findMany({
-        where: (skienStocks, { eq }) =>
-          eq(skienStocks.id, input.skienId),
-        orderBy: (skienStocks, { desc }) => [desc(skienStocks.createdAt)]
-      });
-
-      return skienStocks ?? null;
+  delete: protectedProcedure
+    .input(z.object({
+      id: z.number().min(1)
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.delete(skiens).where(
+        eq(skiens.id, input.id)
+      )
     }),
 
   updateStock: protectedProcedure
@@ -72,6 +68,8 @@ export const skienRouter = createTRPCRouter({
     .query(async ({ ctx, input }) => {
       const skien = await ctx.db.query.skiens.findFirst({
         where: (skiens, { eq }) => eq(skiens.id, input.id),
+        with: { skienStocks: true },
+
       });
 
       return skien ?? null;
