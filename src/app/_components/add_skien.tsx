@@ -112,7 +112,7 @@ export function AddSkienDialog() {
                             )}
                         />
                         <DialogFooter>
-                            <Button type="submit" size="sm" className="px-3">
+                            <Button type="submit" size="sm" className="px-3" disabled={!form.formState.isValid}>
                                 <span className="flex items-center gap-2 justify-baseline">
                                     <span >Create</span>
                                     <ArrowRight className="h-4 w-4" />

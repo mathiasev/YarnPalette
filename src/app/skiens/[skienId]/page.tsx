@@ -16,8 +16,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
 import { redirect } from "next/navigation";
 
-
-
 const stockFormSchema = z.object({
     location: z.string().min(1),
     stock: z.coerce.number()
@@ -40,9 +38,10 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
         onSuccess: () => redirect('/')
     })
 
-    function handleDelete(): MouseEventHandler<HTMLButtonElement> {
-        if (!skien.data) return;
+    function handleDelete() {
+        if (!skien.data) return undefined;
         deleteSkien.mutate({ id: skien.data?.id });
+        redirect('/')
     }
 
     const stockForm = useForm<z.infer<typeof stockFormSchema>>({
@@ -143,7 +142,7 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
                                     <DropdownMenuItem>Edit</DropdownMenuItem>
                                     <DropdownMenuItem>Export</DropdownMenuItem>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem onClick={handleDelete()}>Trash</DropdownMenuItem>
+                                    <DropdownMenuItem onClick={handleDelete}>Trash</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
