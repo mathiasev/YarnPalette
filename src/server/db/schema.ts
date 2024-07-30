@@ -3,7 +3,6 @@
 
 import { relations, sql } from "drizzle-orm";
 import {
-  index,
   pgTableCreator,
   serial,
   timestamp,
@@ -29,13 +28,8 @@ export const posts = createTable(
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
     createdBy: varchar("created_by").notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
-    ),
-  },
-  (example) => ({
-    nameIndex: index("name_idx").on(example.name),
-  })
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
+  }
 );
 
 export const skiens = createTable(
@@ -51,13 +45,8 @@ export const skiens = createTable(
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
-    ),
-  },
-  (example) => ({
-    skienNameIndex: index("skien_name_idx").on(example.name),
-  })
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
+  }
 );
 
 
@@ -65,20 +54,15 @@ export const skienStocks = createTable(
   "skien_stock",
   {
     id: serial("id").primaryKey(),
-    skienId: integer("skien_id").notNull(),
+    skienId: integer("skien_id").notNull().references(() => skiens.id, { onDelete: 'cascade' }),
     location: varchar("location", { length: 256 }).notNull(),
     stock: integer("stock").notNull(),
     createdBy: varchar("created_by").notNull(),
     createdAt: timestamp("created_at", { withTimezone: true })
       .default(sql`CURRENT_TIMESTAMP`)
       .notNull(),
-    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(
-      () => new Date()
-    ),
-  },
-  (example) => ({
-    skienStockNameIndex: index("skien_stock_name_idx").on(example.location),
-  })
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
+  }
 );
 
 
@@ -87,5 +71,8 @@ export const skienRelations = relations(skiens, ({ many }) => ({
 }));
 
 export const skienStockRelations = relations(skienStocks, ({ one }) => ({
-  skien: one(skiens, { fields: [skienStocks.id], references: [skiens.id] }),
+  skien: one(skiens, {
+    fields: [skienStocks.skienId],
+    references: [skiens.id]
+  }),
 }));
