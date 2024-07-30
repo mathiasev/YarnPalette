@@ -87,5 +87,8 @@ export const skienRelations = relations(skiens, ({ many }) => ({
 }));
 
 export const skienStockRelations = relations(skienStocks, ({ one }) => ({
-  skien: one(skiens, { fields: [skienStocks.id], references: [skiens.id] }),
+  skien: one(skiens, {
+    fields: [skienStocks.skienId],
+    references: [skiens.id]
+  }),
 }));

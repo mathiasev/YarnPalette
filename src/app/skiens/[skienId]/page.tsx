@@ -7,23 +7,25 @@ import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
-import { Form } from "~/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
 import { Separator } from "~/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { api } from "~/trpc/react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Input } from "~/components/ui/input";
 
 
 
 const stockFormSchema = z.object({
-    skienId: z.number(),
     location: z.string().min(1),
-    stock: z.number()
+    stock: z.coerce.number()
 });
 
 export default function SkienPage({ params }: { params: { skienId: string } }) {
     const skien = api.skien.getById.useQuery({ id: parseInt(params.skienId) });
+    const skienStock = api.skien.getSkienStock.useQuery({ skienId: parseInt(params.skienId) });
+
     const skienInfo = skien.data?.info as Array<{ key: string; value: string }>;
 
     const addStock = api.skien.updateStock.useMutation(
@@ -37,21 +39,25 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
     const stockForm = useForm<z.infer<typeof stockFormSchema>>({
         resolver: zodResolver(stockFormSchema),
         defaultValues: {
-            skienId: 0,
             location: "",
             stock: 0
         },
     })
 
     function stockFormOnSubmit(values: z.infer<typeof stockFormSchema>) {
-        addStock.mutate(values);
+        if (!skien.data) return;
+        addStock.mutate({
+            skienId: skien.data.id,
+            ...values
+        });
+        stockForm.reset();
     }
-
 
 
     if (skien.isLoading) {
         return <div>Loading...</div>
     }
+
     return (
         <main className="grid flex-1 items-start gap-4  md:gap-8 lg:grid-cols-3 xl:grid-cols-3">
             <div className="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2">
@@ -136,13 +142,23 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
                     <CardContent className="p-6 text-sm">
                         <div className="grid gap-3">
                             <div className="font-semibold">Stock</div>
+                            {JSON.stringify(skienStock.data)}
                             <ul className="grid gap-3">
-                                <li className="flex items-center justify-between">
+                                {skienStock.data?.map((stock, index) => (
+
+                                    <li className="flex items-center justify-between" key={index}>
+                                        <span className="text-muted-foreground">
+                                            {stock.location}
+                                        </span>
+                                        <span>{stock.stock}</span>
+                                    </li>)
+                                )}
+                                {/* <li className="flex items-center justify-between">
                                     <span className="text-muted-foreground">
                                         Location
                                     </span>
                                     <span>qty</span>
-                                </li>
+                                </li> */}
                             </ul>
                             <Separator className="my-2" />
                             <ul className="grid gap-3">
@@ -157,17 +173,45 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
                         <div className="grid gap-3">
                             <div className="font-semibold">Add stock</div>
                             <dl className="grid gap-3">
-                                <div className="flex items-center justify-between">
-                                    <Form {...stockForm}>
-                                        <form onSubmit={stockForm.handleSubmit(stockFormOnSubmit)}>
-                                            <select name="" id="">
-                                                <option value=""></option>
-                                            </select>
-                                            <input type="number" name="" id="" />
-                                            <button type="submit">Add</button>
-                                        </form>
-                                    </Form>
-                                </div>
+                                <Form {...stockForm}    >
+                                    <form onSubmit={stockForm.handleSubmit(stockFormOnSubmit)} className="w-full flex items-center justify-between">
+                                        <FormField
+                                            control={stockForm.control}
+                                            name="location"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <Input placeholder="Location" {...field} />
+                                                    </FormControl>
+                                                    <FormDescription>
+                                                        <span className="text-muted-foreground text-xs">
+                                                            Locations
+                                                        </span>
+                                                    </FormDescription>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <FormField
+                                            control={stockForm.control}
+                                            name="stock"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <Input placeholder="Stock" {...field} type="number" />
+                                                    </FormControl>
+                                                    <FormDescription>
+                                                        <span className="text-muted-foreground text-xs">
+                                                            Stock?
+                                                        </span>
+                                                    </FormDescription>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                        <Button type="submit" variant={"default"}>Add</Button>
+                                    </form>
+                                </Form>
                             </dl>
                         </div>
                     </CardContent>
