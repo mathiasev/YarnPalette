@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "~/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "~/components/ui/form";
 import { Separator } from "~/components/ui/separator";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { api } from "~/trpc/react";
@@ -40,8 +40,9 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
         onSuccess: () => redirect('/')
     })
 
-    const handleDelete = () => {
-        deleteSkien.mutate();
+    function handleDelete() {
+        if (!skien.data) return;
+        deleteSkien.mutate({ id: skien.data?.id });
     }
 
     const stockForm = useForm<z.infer<typeof stockFormSchema>>({

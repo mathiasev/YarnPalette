@@ -3,7 +3,6 @@
 
 import { relations, sql } from "drizzle-orm";
 import {
-  index,
   pgTableCreator,
   serial,
   timestamp,
@@ -55,7 +54,7 @@ export const skienStocks = createTable(
   "skien_stock",
   {
     id: serial("id").primaryKey(),
-    skienId: integer("skien_id").notNull(),
+    skienId: integer("skien_id").notNull().references(() => skiens.id, { onDelete: 'cascade' }),
     location: varchar("location", { length: 256 }).notNull(),
     stock: integer("stock").notNull(),
     createdBy: varchar("created_by").notNull(),
