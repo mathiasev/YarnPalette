@@ -6,6 +6,19 @@ import { skienStocks, skiens } from "~/server/db/schema";
 
 export const skienRouter = createTRPCRouter({
 
+  updateDescription: protectedProcedure
+    .input(z.object({
+      id: z.number(),
+      description: z.string()
+    }))
+    .mutation(async ({ ctx, input }) => {
+      return await ctx.db.update(skiens).set({
+        description: input.description
+      }).where(
+        eq(skiens.id, input.id)
+      ).returning()
+    }),
+
   updateInfo: protectedProcedure.input(z.object({
     id: z.number(),
     info: z.array(z.object({
@@ -30,8 +43,8 @@ export const skienRouter = createTRPCRouter({
       return await ctx.db.insert(skiens).values({
         name: input.name,
         imageUrl: input.imageUrl,
-        createdBy: ctx.user.id,
-        organization: ctx.organization?.id
+        createdBy: ctx.user,
+        organization: ctx.organization
       }).returning()
     }),
 
@@ -56,24 +69,24 @@ export const skienRouter = createTRPCRouter({
         skienId: input.skienId,
         location: input.location,
         stock: input.stock,
-        createdBy: ctx.user.id
+        createdBy: ctx.user
       }).returning()
     }),
 
   getMySkiens: protectedProcedure.query(async ({ ctx }) => {
     let skiens = null;
-    if (ctx?.organization?.id !== undefined && ctx?.organization?.id !== null) {
+    if (ctx?.organization !== undefined && ctx?.organization !== null) {
       skiens = await ctx.db.query.skiens.findMany({
         where: (skiens, { eq, or }) => or(
-          eq(skiens.createdBy, ctx.user.id),
-          eq(skiens.organization, ctx.organization?.id ?? "")),
+          eq(skiens.createdBy, ctx.user),
+          eq(skiens.organization, ctx.organization ?? "")),
         orderBy: (skiens, { desc }) => [desc(skiens.createdAt)],
         limit: 20,
       });
     } else {
       skiens = await ctx.db.query.skiens.findMany({
         where: (skiens, { eq }) =>
-          eq(skiens.createdBy, ctx.user.id),
+          eq(skiens.createdBy, ctx.user),
         orderBy: (skiens, { desc }) => [desc(skiens.createdAt)],
         limit: 20,
       });

@@ -15,6 +15,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
 import { redirect } from "next/navigation";
 import { InfoTable } from "~/app/_components/info_table";
+import { useState } from "react";
+import { Textarea } from "~/components/ui/textarea";
+import { cn } from "~/lib/utils";
 
 const stockFormSchema = z.object({
     location: z.string().min(1),
@@ -25,6 +28,24 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
     const skien = api.skien.getById.useQuery({ id: parseInt(params.skienId) });
 
     const skienInfo = skien.data?.info as Array<{ key: string; value: string }> ?? [];
+
+    const [description, setDescription] = useState(skien.data?.description ?? "");
+    const [isEditingDescription, setIsEditingDescription] = useState(false);
+
+    const updateDescription = api.skien.updateDescription.useMutation({
+        onSuccess: () => {
+            revalidatePath(`/skiens/${params.skienId}`)
+        }
+    });
+
+    const saveDescription = () => {
+        if (!skien.data) return;
+        updateDescription.mutate({
+            id: skien.data.id,
+            description
+        });
+        setIsEditingDescription(false);
+    }
 
     const addStock = api.skien.updateStock.useMutation(
         {
@@ -88,8 +109,8 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
                     >
                         <CardHeader className="pb-3">
                             <CardTitle>{skien?.data?.name}</CardTitle>
-                            <CardDescription className="max-w-lg text-balance leading-relaxed">
-                                {skien?.data?.description}
+                            <CardDescription className=" text-balance leading-relaxed">
+                                <Textarea className={cn(isEditingDescription ? '' : 'bg-card')} onDoubleClick={() => setIsEditingDescription(!isEditingDescription)} value={description} onChange={(e) => setDescription(e.target.value)} readOnly={!isEditingDescription} onKeyDown={(e) => { if (e.keyCode === 13 && e.ctrlKey) saveDescription() }} />
                             </CardDescription>
                         </CardHeader>
                     </Card>

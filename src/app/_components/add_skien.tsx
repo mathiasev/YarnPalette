@@ -104,7 +104,7 @@ export function AddSkienDialog() {
                                         />
                                     </FormControl>
                                     <FormDescription>
-                                        {field.value && <Image src={field.value} alt="Skien Image" width={200} height={200} objectFit="contain" className="rounded mx-auto" />}
+                                        {field.value && <Image src={field.value} alt="Skien Image" width={200} height={200} objectFit="contain" className="rounded mx-auto h-28 w-28 object-contain" />}
                                         <span className="text-muted-foreground text-xs">
                                             Upload an image of your skien.
                                         </span>
