@@ -25,7 +25,7 @@ const stockFormSchema = z.object({
 });
 
 export default function SkienPage({ params }: { params: { skienId: string } }) {
-    const skien = api.skien.getById.useQuery({ id: parseInt(params.skienId) });
+    const skien = api.skien.getByIdProtected.useQuery({ id: parseInt(params.skienId) });
 
     const skienInfo = skien.data?.info as Array<{ key: string; value: string }> ?? [];
 
@@ -34,7 +34,7 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
 
     const updateDescription = api.skien.updateDescription.useMutation({
         onSuccess: () => {
-            revalidatePath(`/skiens/${params.skienId}`)
+            revalidatePath(`/skiens/${params.skienId}`, 'page')
         }
     });
 
@@ -50,14 +50,14 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
     const addStock = api.skien.updateStock.useMutation(
         {
             onSuccess: () => {
-                revalidatePath(`/skiens/${params.skienId}`)
+                revalidatePath(`/skiens/${params.skienId}`, 'page')
             }
         }
     );
 
     const updateInfo = api.skien.updateInfo.useMutation({
         onSuccess: () => {
-            revalidatePath(`/skiens/${params.skienId}`)
+            revalidatePath(`/skiens/${params.skienId}`, 'page')
         }
     });
 

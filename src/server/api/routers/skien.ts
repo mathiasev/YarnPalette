@@ -77,9 +77,8 @@ export const skienRouter = createTRPCRouter({
     let skiens = null;
     if (ctx?.organization !== undefined && ctx?.organization !== null) {
       skiens = await ctx.db.query.skiens.findMany({
-        where: (skiens, { eq, or }) => or(
-          eq(skiens.createdBy, ctx.user),
-          eq(skiens.organization, ctx.organization ?? "")),
+        where: (skiens, { eq }) =>
+          eq(skiens.organization, ctx.organization ?? ""),
         orderBy: (skiens, { desc }) => [desc(skiens.createdAt)],
         limit: 20,
       });
@@ -108,6 +107,17 @@ export const skienRouter = createTRPCRouter({
   }),
 
   getById: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const skien = await ctx.db.query.skiens.findFirst({
+        where: (skiens, { eq }) => eq(skiens.id, input.id),
+
+      });
+
+      return skien ?? null;
+    }),
+
+  getByIdProtected: protectedProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ ctx, input }) => {
       const skien = await ctx.db.query.skiens.findFirst({
