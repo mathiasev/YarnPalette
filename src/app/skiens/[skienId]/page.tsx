@@ -9,12 +9,12 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "~/components/ui/dropdown-menu";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormMessage } from "~/components/ui/form";
 import { Separator } from "~/components/ui/separator";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "~/components/ui/table";
 import { api } from "~/trpc/react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "~/components/ui/input";
 import { redirect } from "next/navigation";
+import { InfoTable } from "~/app/_components/info_table";
 
 const stockFormSchema = z.object({
     location: z.string().min(1),
@@ -24,7 +24,7 @@ const stockFormSchema = z.object({
 export default function SkienPage({ params }: { params: { skienId: string } }) {
     const skien = api.skien.getById.useQuery({ id: parseInt(params.skienId) });
 
-    const skienInfo = skien.data?.info as Array<{ key: string; value: string }>;
+    const skienInfo = skien.data?.info as Array<{ key: string; value: string }> ?? [];
 
     const addStock = api.skien.updateStock.useMutation(
         {
@@ -33,6 +33,12 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
             }
         }
     );
+
+    const updateInfo = api.skien.updateInfo.useMutation({
+        onSuccess: () => {
+            revalidatePath(`/skiens/${params.skienId}`)
+        }
+    });
 
     const deleteSkien = api.skien.delete.useMutation({
         onSuccess: () => redirect('/')
@@ -61,6 +67,13 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
         stockForm.reset();
     }
 
+    function handleInfoChange(info: Array<{ key: string; value: string }>) {
+        if (!skien.data) return;
+        updateInfo.mutate({
+            id: skien.data.id,
+            info
+        });
+    }
 
     if (skien.isLoading) {
         return <div>Loading...</div>
@@ -90,22 +103,7 @@ export default function SkienPage({ params }: { params: { skienId: string } }) {
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Info</TableHead>
-                                    <TableHead>Details</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {skienInfo?.map((info: { key: string; value: string }) => {
-                                    return (<TableRow className="bg-accent" key={info.key}>
-                                        <TableCell>{info.key}</TableCell>
-                                        <TableCell>{info.value}</TableCell>
-                                    </TableRow>)
-                                })}
-                            </TableBody>
-                        </Table>
+                        <InfoTable info={skienInfo} onChange={handleInfoChange} />
                     </CardContent>
                 </Card>
             </div>

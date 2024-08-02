@@ -1,10 +1,24 @@
-import { eq, or } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "~/server/api/trpc";
 import { skienStocks, skiens } from "~/server/db/schema";
 
 export const skienRouter = createTRPCRouter({
+
+  updateInfo: protectedProcedure.input(z.object({
+    id: z.number(),
+    info: z.array(z.object({
+      key: z.string(),
+      value: z.string()
+    }))
+  })).mutation(async ({ ctx, input }) => {
+    return await ctx.db.update(skiens).set({
+      info: input.info
+    }).where(
+      eq(skiens.id, input.id)
+    ).returning()
+  }),
 
   create: protectedProcedure
     .input(z.object({
