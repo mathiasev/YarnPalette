@@ -1,6 +1,7 @@
 import { postRouter } from "~/server/api/routers/post";
 import { skienRouter } from "./routers/skien";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
+import { wishlistRouter } from "./routers/wishlist";
 
 /**
  * This is the primary router for your server.
@@ -10,6 +11,7 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 export const appRouter = createTRPCRouter({
   post: postRouter,
   skien: skienRouter,
+  wishlist: wishlistRouter
 });
 
 // export type definition of API
