@@ -144,4 +144,30 @@ export const wishlistRouter = createTRPCRouter({
       )
     }),
 
+
+  getWishListItems: protectedProcedure
+    .input(z.object({ wishlistId: z.number() }))
+    .query(async ({ ctx, input }) => {
+      const wishlistItems = await ctx.db.query.wishlistItems.findMany({
+        where: (wishlistItem, { eq }) => eq(wishlistItem.wishlistId, input.wishlistId),
+        orderBy: (wishlistItem, { desc }) => [desc(wishlistItem.createdAt)],
+      });
+
+      return wishlistItems ?? null;
+    }),
+
+  deleteWishlistItem: protectedProcedure
+    .input(z.object({
+      id: z.number().min(1),
+      wishlistId: z.number().min(1)
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await ctx.db.delete(wishlistItems).where(
+        and(
+          eq(wishlistItems.wishlistId, input.wishlistId),
+          eq(wishlistItems.createdBy, ctx.user),
+          eq(wishlistItems.id, input.id),
+        )
+      )
+    }),
 });

@@ -1,7 +1,7 @@
 // Example model schema from the Drizzle docs
 // https://orm.drizzle.team/docs/sql-schema-declaration
 
-import { or, relations, sql } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   pgTableCreator,
   serial,
@@ -10,7 +10,6 @@ import {
   json,
   integer,
   boolean,
-  PgEnumColumn,
   pgEnum
 } from "drizzle-orm/pg-core";
 
@@ -36,7 +35,7 @@ export const posts = createTable(
 );
 
 
-export const wishlistStatus = pgEnum("wishlist_status", ["public", "private"]);
+export const wishlistStatus = pgEnum("wishlist_status", ["favourite", "complete"]);
 
 export const wishlistItems = createTable(
   "wishlist_item",

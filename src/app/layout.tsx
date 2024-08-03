@@ -11,7 +11,7 @@ import { type Metadata } from "next";
 import { TRPCReactProvider } from "~/trpc/react";
 import { Header } from './_components/header';
 import { cn } from '~/lib/utils';
-import { Guest } from './_components/guest';
+import { GuestHeader } from './_components/guest';
 
 export const metadata: Metadata = {
   title: "Yarn Palette",
@@ -27,15 +27,15 @@ export default function RootLayout({
       <html lang="en" className={`${GeistSans.variable}`}>
         <body className={cn("min-h-screen bg-background font-sans antialiased")}>
           <TRPCReactProvider>
-            <Header />
-            <div>
-              <SignedOut>
-                <Guest />
-              </SignedOut>
-              <SignedIn>
-                {children}
-              </SignedIn>
-            </div>
+
+            <SignedOut>
+              <GuestHeader />
+            </SignedOut>
+            <SignedIn>
+              <Header />
+            </SignedIn>
+            {children}
+
           </TRPCReactProvider>
         </body>
       </html>

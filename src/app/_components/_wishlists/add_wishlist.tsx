@@ -1,8 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogClose } from "@radix-ui/react-dialog";
 import { ArrowRight } from "lucide-react";
-import { revalidatePath } from "next/cache";
-import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
@@ -13,7 +11,7 @@ import { Input } from "~/components/ui/input";
 import { api } from "~/trpc/react";
 
 export function AddWishlist() {
-
+    const util = api.useUtils();
     const wishlistSchema = z.object({
         name: z.string().min(1).max(100),
         public: z.coerce.boolean(),
@@ -27,8 +25,9 @@ export function AddWishlist() {
     })
 
     const createWishlist = api.wishlist.createWishlist.useMutation({
-        onSuccess: (wishlist) => {
-            wishlist[0]?.id && revalidatePath(`/wishlists`, 'page')
+        onSuccess: () => {
+            /* eslint-disable-next-line @typescript-eslint/no-floating-promises */
+            util.wishlist.invalidate();
         }
     });
 
@@ -37,11 +36,10 @@ export function AddWishlist() {
     }
 
     return (
-        <div>
-            <h1>Add Wishlist</h1>
+        <div className="w-full">
             <Dialog>
                 <DialogTrigger asChild>
-                    <Button>Add Wishlist</Button>
+                    <Button className="mr-0 ml-auto" >Add Wishlist</Button>
                 </DialogTrigger>
                 <DialogContent>
                     <DialogHeader>

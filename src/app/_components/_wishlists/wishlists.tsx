@@ -2,26 +2,45 @@
 import { api } from "~/trpc/react";
 import { AddWishlist } from "./add_wishlist";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "~/components/ui/accordion";
-import { WishlistForm } from "./wishlist_form";
 import { WishlistItems } from "./wishlist_items";
+import { Badge } from "~/components/ui/badge";
+import { WishlistToolbar } from "./wishlist_toolbar";
+import { type wishlist as WishlistSchema } from "~/server/db/schema";
 
 export function Wishlists() {
 
-    const wishlists = api.wishlist.getWishlists.useQuery();
+    const wishlistsQuery = api.wishlist.getWishlists.useQuery();
 
-    if (wishlists.isLoading) return <div>Loading...</div>;
+    if (wishlistsQuery.isLoading) return <div>Loading...</div>;
+
+
+    function wishlistVisibility(wishlist: typeof WishlistSchema.$inferSelect): string {
+        if (wishlist.public) return "Public";
+        if (wishlist.organization !== undefined && wishlist.organization !== null) return "Household";
+        return "Private";
+    }
+
+
 
     return (
-        <div>
-            <h1>Wishlists</h1>
+        <div className="w-full">
             <AddWishlist />
             <Accordion type="single" collapsible className="mt-4  w-full min-w-[400px]">
-                {wishlists.data?.map((wishlist) => (
-                    <AccordionItem key={wishlist.id} value={wishlist.id.toString()}>
-                        <AccordionTrigger>{wishlist.name}</AccordionTrigger>
+                {wishlistsQuery.data?.map((wishlist) => (
+                    <AccordionItem key={wishlist.id} value={wishlist.id.toString()} >
+                        <AccordionTrigger className="hover:no-underline group">
+                            <div className="flex w-full items-center justify-between mr-4">
+                                <p className="group-hover:underline text-lg font-medium">
+                                    {wishlist.name}
+                                </p>
+                                <Badge variant="secondary" className="text-xs hover:no-underline">
+                                    {wishlistVisibility(wishlist)}
+                                </Badge>
+                            </div>
+                        </AccordionTrigger>
                         <AccordionContent>
-                            <WishlistForm wishlistId={wishlist.id} />
-                            <WishlistItems items={wishlist.wishlistItems} />
+                            <WishlistToolbar wishlistId={wishlist.id} />
+                            <WishlistItems wishlistId={wishlist.id} />
                         </AccordionContent>
                     </AccordionItem>
                 ))}

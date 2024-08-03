@@ -1,26 +1,19 @@
 "use client"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Plus, Trash } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
 import { Textarea } from "~/components/ui/textarea";
-import { cn } from "~/lib/utils";
 import { api } from "~/trpc/react";
-import { wishlistItems } from "~/server/db/schema";
-// type Wishlist = typeof wishlist.$inferSelect;
 
-import { WishlistItems } from "./wishlist_items";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "~/components/ui/form";
-import { useRouter } from "next/navigation";
-import { revalidatePath } from "next/cache";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "~/components/ui/dialog";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 
-export function WishlistForm({ wishlistId }: { wishlistId: number }) {
+export function WishlistItemForm({ wishlistId }: { wishlistId: number }) {
 
-    const router = useRouter();
     const utils = api.useUtils();
     const newItemSchema = z.object({
         name: z.string().min(1).max(256),
@@ -48,8 +41,8 @@ export function WishlistForm({ wishlistId }: { wishlistId: number }) {
 
     const addNewItem = api.wishlist.createWishlistItem.useMutation({
         onSuccess: () => {
-            utils.wishlist.getWishlist.invalidate();
-            router.refresh();
+            /* eslint-disable-next-line @typescript-eslint/no-floating-promises */
+            utils.wishlist.getWishListItems.invalidate({ wishlistId: wishlistId });
         }
     });
 
@@ -64,7 +57,7 @@ export function WishlistForm({ wishlistId }: { wishlistId: number }) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button size="sm" className="px-3">
+                <Button size={"sm"} className="text-xs" variant={"secondary"}>
                     <span className="flex items-center gap-2 justify-baseline">
                         <span >New item</span>
                         <Plus className="h-4 w-4" />
