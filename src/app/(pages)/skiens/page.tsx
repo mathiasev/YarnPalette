@@ -1,4 +1,4 @@
-import { Skiens } from "../_components/skiens";
+import { Skiens } from "../../_components/_skiens/skiens";
 
 export default function SkiensPage() {
     return (

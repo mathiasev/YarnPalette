@@ -1,4 +1,4 @@
-import { YourSkiens } from "./_components/your-skiens";
+import { YourSkiens } from "./_components/_skiens/your-skiens";
 import { Suspense } from "react";
 
 

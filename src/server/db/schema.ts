@@ -8,7 +8,9 @@ import {
   timestamp,
   varchar,
   json,
-  integer
+  integer,
+  boolean,
+  pgEnum
 } from "drizzle-orm/pg-core";
 
 /**
@@ -31,6 +33,50 @@ export const posts = createTable(
     updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
   }
 );
+
+
+export const wishlistStatus = pgEnum("wishlist_status", ["favourite", "complete"]);
+
+export const wishlistItems = createTable(
+  "wishlist_item",
+  {
+    id: serial("id").primaryKey(),
+    wishlistId: integer("wishlist_id").notNull(),
+    name: varchar("name", { length: 256 }),
+    createdBy: varchar("created_by").notNull(),
+    description: varchar("description", { length: 256 }),
+    link: varchar("link", { length: 256 }),
+    status: wishlistStatus("status"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .default(sql`CURRENT_TIMESTAMP`)
+      .notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
+  }
+);
+
+export const wishlist = createTable(
+  "wishlist", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 256 }).notNull(),
+  public: boolean("public").notNull(),
+  organization: varchar("organization", { length: 256 }),
+  createdBy: varchar("created_by").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).$onUpdate(() => new Date()),
+});
+
+export const wishlistRelations = relations(wishlist, ({ many }) => ({
+  wishlistItems: many(wishlistItems)
+}));
+
+export const wishlistItemRelations = relations(wishlistItems, ({ one }) => ({
+  wishlist: one(wishlist, {
+    fields: [wishlistItems.wishlistId],
+    references: [wishlist.id]
+  })
+}));
 
 export const skiens = createTable(
   "skien",
@@ -76,4 +122,6 @@ export const skienStockRelations = relations(skienStocks, ({ one }) => ({
     fields: [skienStocks.skienId],
     references: [skiens.id]
   }),
+
+
 }));
