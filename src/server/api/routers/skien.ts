@@ -129,4 +129,15 @@ export const skienRouter = createTRPCRouter({
       return skien ?? null;
     }),
 
+  updateColor: protectedProcedure.input(z.object({
+    id: z.number(),
+    color: z.string()
+  })).mutation(async ({ ctx, input }) => {
+    return await ctx.db.update(skiens).set({
+      color: input.color
+    }).where(
+      eq(skiens.id, input.id)
+    ).returning()
+  }),
+
 });
